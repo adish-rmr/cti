@@ -1,5 +1,11 @@
+import pymongo
+import time
 import streamlit as st
 import functions as f
+from api_echa import search_dossier
+
+
+#PAGE ELEMENTS
 
 if "page" not in st.session_state:
     st.session_state.page = "home"
@@ -12,9 +18,7 @@ toggle_label = (
     if st.session_state.get("my_toggle", False)
     else "Quick guide and options"
 )
-
 toggle_value = st.session_state.get("my_toggle", False)
-
 is_toggle = st.toggle(toggle_label, value=toggle_value, key="my_toggle")
 
 if is_toggle:
@@ -36,6 +40,20 @@ t_input = st.text_input("Name of the ingredient as used", placeholder="'Formalde
 
 selector = st.radio("Search by:", ["Ingredient (CIR)", "Chemical Compound (ECHA/PubChem)"], horizontal=True)
 
+#DATABASE LOADING
+
+uri = "mongodb+srv://giorgio2006:TWoA7kZsvL30k6Ua@cluster0563.wr9rvs7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0563"
+client = pymongo.MongoClient(uri)
+db = client.ingredients
+cir = db.noael
+echa = db.echa
+st.session_state.echa = echa
+st.session_state.cir = cir
+echa_list = echa.distinct('name')
+f.check_update()
+
+#INPUT PATH
+
 if t_input:
     if selector == "Ingredient (CIR)":
         risultati = f.search_ingredients(t_input)
@@ -47,18 +65,20 @@ if t_input:
                 il = st.session_state.nome = f'{elemento_ricercato[0]}'
                 st.switch_page("pages/results.py")
         else:
-            st.write("Nessun elemento trovato, prova a cercare su ECHA e PubChem")
+            st.write("No element found, try ECHA or PubChem")
             selector = "Chemical Compound (ECHA/PubChem)"
+            time.sleep(1)
     if selector == "Chemical Compound (ECHA/PubChem)":
-        saved = f.saved_echa()
-        for ingredient in saved:
-            if ingredient.startswith(t_input) or t_input in ingredient:
-                doc = f.output_echa(ingredient)
-                st.write(f"### **{doc['name']}**")
-                st.write(f"Via inhalation: {doc['ViaInhalationRoute']}")
-                st.write(f"Via Dermal: {doc['ViaDermalRoute']}")
-            else:
-                doc = False
-
+        datatox, acutetox = search_dossier(t_input)
+        if datatox:
+            st.link_button("ECHA Tox Summary", datatox)
+        if acutetox:
+            st.link_button("ECHA Acute Toxicity report", acutetox)
+        for ingredient in echa_list:
+            if ingredient.startswith(t_input):
+                document = echa.find_one({'name': ingredient})
+                st.write(f"### {document['name']}")
+                st.write(f"Via inhalation: {document['ViaInhalationRoute']}")
+                st.write(f"Via Dermal: {document['ViaDermalRoute']}")
 
 

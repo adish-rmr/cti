@@ -20,9 +20,9 @@ def read2(name_doc):
 
 
 for nome, url in ingredienti.items():
-    if nome.startswith("C"):
+    if nome.startswith("A"):
         nome = nome.replace("/", "_")
-        if not os.path.isfile(f"I:\pdfs\{nome}"):
+        if os.path.isfile(f"I:\pdfs\{nome}"):
             response = requests.get(url)
             soup = BeautifulSoup(response.text, 'html.parser')
             lista_pdf = []

@@ -72,7 +72,7 @@ def check_update():
 
 
 def read(name_doc):
-    reader = PdfReader(f"./data/{name_doc}")
+    reader = PdfReader(f"./data/documento")
     text_pdf = ""
     for page in reader.pages:
         text_pdf += page.extract_text() + "\n"
@@ -80,37 +80,29 @@ def read(name_doc):
     return text
 
 
-def extract_phrases(text):
-    keywords = ["NOAEL", "LD50"]
-    match_list = []
-    num = 1
-
-    pattern = re.compile(rf'.{0,200}{keywords[0]}.{0,200}\d+.{0,200}', re.IGNORECASE)
+def find_toxicity(text, search_terms):
+    pattern = re.compile(
+        r'(.{0,200}(' + '|'.join(map(re.escape, search_terms)) + r').{0,200}\d+.{0,200})',
+        re.IGNORECASE
+    )
     matches = pattern.findall(text)
 
-    for quote in matches:
-        print(quote)
-        x = f"{num}) + {quote}"
-        match_list.append(x)
-        num += 1
-    return match_list
+    return [f"{i + 1}) {match[0]}" for i, match in enumerate(matches)]
 
 
-def ai(text):
-    extracted_phrases = extract_phrases(text)
-    content = " ".join(extracted_phrases)
+def ai(phrases):
+    content = " ".join(phrases)
 
-    if len(extracted_phrases) > 1:
+    if len(phrases) > 1:
         response = ollama.chat(model="llama3", messages=[
             {
                 'role': 'user',
-                'content':f"What is the NOAEL and LD50 or DNEL or LOAEL value in this text? {content}",
+                'content':f"What is the NOAEL and LD50 (or LOAEL) value in this text? {content}",
             },
         ])
 
-        st.write(response['message']['content'])
-        st.session_state.phrases = extracted_phrases
-        st.session_state.testo = response['message']['content']
+        text = response['message']['content']
+        st.session_state.testo_ai = text
 
 
 """UTILITY STREAMLIT FUNCTIONS"""
@@ -121,8 +113,6 @@ def navigate_to(page):
 
 
 def search_ingredients(search):
-    check_update()
-
     with open("./data/ingredient.pkl", "rb") as pickle_file:
         ingredient = pickle.load(pickle_file)
 
@@ -142,61 +132,6 @@ def show_results(risultati):
     return selected_ingredient
 
 
-"""DATABASE CIR"""
 
-
-def upload():
-    db, collection, client = connect()
-
-    element = {
-        "ingrediente": st.session_state.nome,
-        "testo": st.session_state.testo
-    }
-
-    if collection.count_documents({"ingrediente": st.session_state.nome}) == 0:
-        collection.insert_one(element)
-        client.close()
-        return True
-    else:
-        client.close()
-        return False
-
-
-def connect():
-    client = MongoClient(
-        "mongodb+srv://giorgio2006:TWoA7kZsvL30k6Ua@cluster0563.wr9rvs7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0563")
-    db = client.ingredients
-    collection = db.noael
-    return db, collection, client
-
-
-def saved_ingredients():
-    db, collection, client = connect()
-    ingredients = collection.distinct('ingrediente')
-    client.close()
-    return ingredients
-
-
-def output_ingredient(nome):
-    db, collection, client = connect()
-    document = collection.find_one({'ingrediente': nome})
-    client.close()
-    return document
-
-
-def saved_echa():
-    db, collection, client = connect()
-    echa_col = db.echa
-    ingredients = echa_col.distinct('name')
-    client.close()
-    return ingredients
-
-
-def output_echa(nome):
-    db, collection, client = connect()
-    echa_col = db.echa
-    document = echa_col.find_one({'name': nome})
-    client.close()
-    return document
 
 

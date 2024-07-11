@@ -8,39 +8,29 @@ nome = st.session_state.nome
 link = st.session_state.link
 st.subheader(nome, divider="blue")
 
-saved = f.saved_ingredients()
-for ingredient in saved:
-    if nome == ingredient:
-        doc = f.output_ingredient(nome)
-        st.write(doc['testo'])
-    else:
-        doc = False
-
-response = requests.get(link)
-soup = BeautifulSoup(response.text, 'html.parser')
-lista_pdf = []
-pdf = soup.find_all("a")
-for pd in pdf:
-    if ".." in pd["href"]:
-        lista_pdf.append(pd["href"])
-last_pdf = lista_pdf[0]
-
-url = "https://cir-reports.cir-safety.org" + last_pdf[2:]
-label = "Download last report"
-st.link_button(label, url)
-st.link_button("Back", "http://localhost:8501/")
-
-if not doc:
-    response = requests.get(url)
-    if response.status_code == 200:
-        with open(f"./data/documento", "wb") as file:
-            file.write(response.content)
-    else:
-        st.write("Failed to download PDF.")
-    testo = f.read("documento")
-    if ai_ready:
-        f.ai(testo)
-        st.write(st.session_state.testo)
-        st.write(st.session_state.phrases)
-        f.upload()
+cir = st.session_state.cir
+document = cir.find_one({'ingrediente': nome})
+if document:
+    st.write(document['testo'])
+    st.download_button("Download last report", document['link'])
+else:
+    response = requests.get(link)
+    soup = BeautifulSoup(response.text, 'lxml')
+    pdf_link = soup.find('a', href=lambda href: href and '..' in href)
+    if pdf_link:
+        url = f"https://cir-reports.cir-safety.org{pdf_link['href'][2:]}"
+        st.link_button("Download last report", url)
+        response = requests.get(url)
+        if response.status_code == 200:
+            with open(f"./data/documento", "wb") as file:
+                file.write(response.content)
+                testo = f.read("documento")
+                search_terms = ['NOAEL', 'LD50', 'LD 50']
+                result = f.find_toxicity(testo, search_terms)
+                st.write(result)
+                if ai_ready:
+                    f.ai(testo)
+                    testo = st.session_state.testo_ai
+                    st.write(testo)
+                    cir.insert_one({'ingrediente': nome, "testo": testo, 'link': url})
 
