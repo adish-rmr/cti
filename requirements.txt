@@ -1,0 +1,9 @@
+beautifulsoup4
+requests
+ollama
+pymongo
+pypdf
+streamlit
+urllib.parse
+pandas
+xmltodict
