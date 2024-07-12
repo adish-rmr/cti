@@ -3,7 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 import functions as f
 
-ai_ready = True
+ai_ready = False
+
 nome = st.session_state.nome
 link = st.session_state.link
 st.subheader(nome, divider="blue")
@@ -33,4 +34,7 @@ else:
                     testo = st.session_state.testo_ai
                     st.write(testo)
                     cir.insert_one({'ingrediente': nome, "testo": testo, 'link': url})
+                else:
+                    st.write("AI not available")
 
+st.page_link("interface.py", label="**BACK**", icon="🔙")

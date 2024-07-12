@@ -3,12 +3,12 @@ import re
 import pymongo
 from api_echa import search_dossier
 
-
+st.subheader("Label Analyzer", divider="blue")
 cir = st.session_state.cir
 echa = st.session_state.echa
 
-text = st.text_area("Paste the list of ingredients here, each ingredient must be separated by a comma. *Avoid Aqua or similar*")
-
+text = st.text_area("Paste the list of ingredients here, each ingredient must be separated by a comma. Avoid *Aqua* or common ingredients")
+st.page_link("interface.py", label="**BACK**", icon="🔙")
 pattern = r'^[^,]+|(?<=,)[^,]+(?=,)|[^,]+$'
 lista = re.findall(pattern, text)
 st.write(lista)

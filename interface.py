@@ -34,11 +34,15 @@ if is_toggle:
     update = st.button("Update database", key="update", help="L'aggiornamento del database viene effettuato automaticamente ogni 30 gg, se si vuole aggiornare ora cliccare il bottone")
     if update:
         f.check_update()
+    check = st.checkbox("(CIR only) All ingredients that contains:", value=True)
 
 t_input = st.text_input("Name of the ingredient as used", placeholder="'Formaldehyde'", max_chars=100,
                         key="barra_input")
 
-selector = st.radio("Search by:", ["Ingredient (CIR)", "Chemical Compound (ECHA/PubChem)"], horizontal=True)
+
+selector = st.radio("Filter by:", ["Ingredient (CIR)", "Chemical Compound (ECHA/PubChem)"], horizontal=True)
+
+st.page_link("pages/text.py", label=":rainbow[TRY OUR NEW LABEL MULTI-ANALYZER]", icon="🪄")
 
 #DATABASE LOADING
 
@@ -56,7 +60,10 @@ f.check_update()
 
 if t_input:
     if selector == "Ingredient (CIR)":
-        risultati = f.search_ingredients(t_input)
+        if check:
+            risultati = f.search_ingredients(t_input)
+        else:
+            risultati = f.search_ingredients2(t_input)
         if risultati:
             st.write("Please select the ingredient by clicking on the name.")
             elemento_ricercato = f.show_results(risultati)
@@ -78,7 +85,7 @@ if t_input:
         except Exception as e:
             st.link_button("Google Search", f"https://www.google.com/search?&q={t_input}+noael+ld50+loael+dnel")
         for ingredient in echa_list:
-            if ingredient.startswith(t_input):
+            if ingredient.lower().startswith(t_input.lower()):
                 document = echa.find_one({'name': ingredient})
                 st.write(f"### {document['name']}")
                 st.write(f"Via inhalation: {document['ViaInhalationRoute']}")

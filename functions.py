@@ -123,6 +123,17 @@ def search_ingredients(search):
             risultati.append(ingredient_selection)
     return risultati
 
+def search_ingredients2(search):
+    with open("./data/ingredient.pkl", "rb") as pickle_file:
+        ingredient = pickle.load(pickle_file)
+
+    risultati = []
+    for nome, url in ingredient.items():
+        if nome.lower().startswith(search.lower()):
+            ingredient_selection = [nome, url]
+            risultati.append(ingredient_selection)
+    return risultati
+
 
 def show_results(risultati):
     selected_ingredient = None
