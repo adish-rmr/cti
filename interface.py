@@ -34,11 +34,11 @@ if is_toggle:
     update = st.button("Update database", key="update", help="L'aggiornamento del database viene effettuato automaticamente ogni 30 gg, se si vuole aggiornare ora cliccare il bottone")
     if update:
         f.check_update()
-    check = st.checkbox("(CIR only) All ingredients that contains:", value=True)
+    
 
 t_input = st.text_input("Name of the ingredient as used", placeholder="'Formaldehyde'", max_chars=100,
                         key="barra_input")
-
+check = st.checkbox("(CIR only) All ingredients that contains:", value=True)
 
 selector = st.radio("Filter by:", ["Ingredient (CIR)", "Chemical Compound (ECHA)"], horizontal=True)
 
