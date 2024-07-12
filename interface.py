@@ -27,7 +27,7 @@ if is_toggle:
     :blue-background[Come funziona?]  
     Scrivi un ingrediente cosmetico e avrai in output i valori NOAL o LD50.  
     :blue-background[Da dove prende i dati?]  
-    I dati provengono dal [Cosmetic Ingredient Review (CIR)](https://cir-safety.org/), [ECHA](https://chem.echa.europa.eu/)
+    I dati provengono dal [Cosmetic Ingredient Review (CIR)](https://cir-safety.org/), [ECHA](https://chem.echa.europa.eu/)  
     :blue-background[Viene impiegata l'intelligenza artificiale?]  
     Sì, il modulo AI è [Meta Llama3](https://llama.meta.com/llama3/) con 8 miliardi di parametri, è stato ottimizzato per la ricerca dei NOAL/LD50.  
     """
