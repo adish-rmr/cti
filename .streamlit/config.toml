@@ -1,3 +1,7 @@
 [theme]
 
-font = "monospace"
+primaryColor="#D4C44E"
+backgroundColor="#1C1C1A"
+secondaryBackgroundColor="#363635"
+textColor="#F7F7F7"
+font="monospace"
