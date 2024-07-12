@@ -69,11 +69,14 @@ if t_input:
             selector = "Chemical Compound (ECHA/PubChem)"
             time.sleep(1)
     if selector == "Chemical Compound (ECHA/PubChem)":
-        datatox, acutetox = search_dossier(t_input)
-        if datatox:
-            st.link_button("ECHA Tox Summary", datatox)
-        if acutetox:
-            st.link_button("ECHA Acute Toxicity report", acutetox)
+        try:
+            datatox, acutetox = search_dossier(t_input)
+            if datatox:
+                st.link_button("ECHA Tox Summary", datatox)
+            if acutetox:
+                st.link_button("ECHA Acute Toxicity report", acutetox)
+        except Exception as e:
+            st.link_button("Google Search", f"https://www.google.com/search?&q={t_input}+noael+ld50+loael+dnel")
         for ingredient in echa_list:
             if ingredient.startswith(t_input):
                 document = echa.find_one({'name': ingredient})
