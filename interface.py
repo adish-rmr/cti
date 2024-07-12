@@ -75,7 +75,7 @@ if t_input:
             st.write("No element found, try ECHA or PubChem")
             selector = "Chemical Compound (ECHA/PubChem)"
             time.sleep(1)
-    if selector == "Chemical Compound (ECHA/PubChem)":
+    if selector == "Chemical Compound (ECHA)":
         try:
             datatox, acutetox = search_dossier(t_input)
             if datatox:
