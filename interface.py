@@ -34,6 +34,8 @@ if is_toggle:
 t_input = st.text_input("Name of the ingredient as used", placeholder="'Formaldehyde'", max_chars=100,
                         key="barra_input")
 
+check = st.checkbox("(CIR only) All ingredients that contains", value=True)
+
 selector = st.radio("Search by:", ["Ingredient (CIR)", "Chemical Compound (ECHA/PubChem)"], horizontal=True)
 
 if t_input:
