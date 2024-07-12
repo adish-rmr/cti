@@ -20,6 +20,7 @@ toggle_label = (
 )
 toggle_value = st.session_state.get("my_toggle", False)
 is_toggle = st.toggle(toggle_label, value=toggle_value, key="my_toggle")
+check = True
 
 if is_toggle:
     multi = """
@@ -34,11 +35,12 @@ if is_toggle:
     update = st.button("Update database", key="update", help="L'aggiornamento del database viene effettuato automaticamente ogni 30 gg, se si vuole aggiornare ora cliccare il bottone")
     if update:
         f.check_update()
+    check = st.checkbox("(CIR only) All ingredients that contains:", value=True)
     
 
 t_input = st.text_input("Name of the ingredient as used", placeholder="'Formaldehyde'", max_chars=100,
                         key="barra_input")
-check = st.checkbox("(CIR only) All ingredients that contains:", value=True)
+
 
 selector = st.radio("Filter by:", ["Ingredient (CIR)", "Chemical Compound (ECHA)"], horizontal=True)
 
@@ -73,7 +75,7 @@ if t_input:
                 st.switch_page("pages/results.py")
         else:
             st.write("No element found, try ECHA or PubChem")
-            selector = "Chemical Compound (ECHA/PubChem)"
+            selector = "Chemical Compound (ECHA)"
             time.sleep(1)
     if selector == "Chemical Compound (ECHA)":
         try:
