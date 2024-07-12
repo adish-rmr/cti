@@ -26,7 +26,7 @@ if is_toggle:
     :blue-background[Come funziona?]  
     Scrivi un ingrediente cosmetico e avrai in output i valori NOAL o LD50.  
     :blue-background[Da dove prende i dati?]  
-    I dati provengono dal [Cosmetic Ingredient Review (CIR)](https://cir-safety.org/), [ECHA](https://chem.echa.europa.eu/), [PUBCHEM](https://pubchem.ncbi.nlm.nih.gov/)
+    I dati provengono dal [Cosmetic Ingredient Review (CIR)](https://cir-safety.org/), [ECHA](https://chem.echa.europa.eu/)
     :blue-background[Viene impiegata l'intelligenza artificiale?]  
     Sì, il modulo AI è [Meta Llama3](https://llama.meta.com/llama3/) con 8 miliardi di parametri, è stato ottimizzato per la ricerca dei NOAL/LD50.  
     """
@@ -40,7 +40,7 @@ t_input = st.text_input("Name of the ingredient as used", placeholder="'Formalde
                         key="barra_input")
 
 
-selector = st.radio("Filter by:", ["Ingredient (CIR)", "Chemical Compound (ECHA/PubChem)"], horizontal=True)
+selector = st.radio("Filter by:", ["Ingredient (CIR)", "Chemical Compound (ECHA)"], horizontal=True)
 
 st.page_link("pages/text.py", label=":rainbow[TRY OUR NEW LABEL MULTI-ANALYZER]", icon="🪄")
 
