@@ -4,7 +4,7 @@ ollama
 pymongo
 pypdf
 streamlit
-urllib.parse
 pandas
 xmltodict
 lxml
+
