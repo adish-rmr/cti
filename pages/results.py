@@ -13,7 +13,7 @@ cir = st.session_state.cir
 document = cir.find_one({'ingrediente': nome})
 if document:
     st.write(document['testo'])
-    st.download_button("Download last report", document['link'])
+    st.link_button("Download last report", document['link'])
 else:
     response = requests.get(link)
     soup = BeautifulSoup(response.text, 'lxml')
